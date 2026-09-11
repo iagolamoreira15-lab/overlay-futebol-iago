@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overlay Futebol - Iago Lucas Futebol</title>
+
+<style>
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: transparent;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* ÁREA GERAL DO WIDGET */
+.overlay {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+}
+
+/* COMPETIÇÃO E RODADA */
+.competition {
+    position: absolute;
+    top: 28px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 900;
+}
+
+.round {
+    position: absolute;
+    top: 30px;
+    right: 140px;
+    font-size: 25px;
+    font-weight: 900;
+}
+
+/* TIMES */
+.home-team,
+.away-team {
+    position: absolute;
+    top: 145px;
+    width: 500px;
+    text-align: center;
+    font-size: 38px;
+    font-weight: 900;
+}
+
+.home-team {
+    left: 120px;
+}
+
+.away-team {
+    right: 120px;
+}
+
+/* PLACAR */
+.score {
+    position: absolute;
+    top: 125px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 72px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.score .x {
+    margin: 0 18px;
+}
+
+/* CRONÔMETRO */
+.timer {
+    position: absolute;
+    top: 205px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 34px;
+    font-weight: 900;
+}
+
+.period {
+    position: absolute;
+    top: 250px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 22px;
+    font-weight: 900;
+}
+
+.added {
+    position: absolute;
+    top: 280px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    font-weight: 900;
+}
+
+/* ESCALAÇÕES */
+.lineup {
+    position: absolute;
+    top: 395px;
+    width: 320px;
+}
+
+.home-lineup {
+    left: 38px;
+}
+
+.away-lineup {
+    right: 38px;
+}
+
+.formation {
+    text-align: center;
+    font-size: 23px;
+    font-weight: 900;
+    margin-bottom: 12px;
+}
+
+.players {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.player {
+    display: flex;
+    align-items: center;
+    height: 25px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.player-number {
+    width: 35px;
+    font-weight: 900;
+}
+
+.player-name {
+    flex: 1;
+}
+
+/* TÉCNICO */
+.coach {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,.4);
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.coach-label {
+    font-weight: 900;
+}
+
+/* RESERVAS */
+.bench {
+    margin-top: 15px;
+}
+
+.bench-title {
+    font-size: 19px;
+    font-weight: 900;
+    margin-bottom: 7px;
+}
+
+.bench-players {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 10px;
+}
+
+.bench-player {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* TEXTO DE TESTE */
+.center-area {
+    position: absolute;
+    top: 330px;
+    left: 300px;
+    right: 300px;
+    bottom: 130px;
+    pointer-events: none;
+}
+
+/* RODAPÉ */
+.footer {
+    position: absolute;
+    bottom: 28px;
+    left: 80px;
+    right: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 900;
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay">
+
+    <div class="competition" id="competition">
+        CAMPEONATO BRASILEIRO
+    </div>
+
+    <div class="round" id="round">
+        27ª RODADA
+    </div>
+
+    <div class="home-team" id="homeTeam">
+        TIME DA CASA
+    </div>
+
+    <div class="away-team" id="awayTeam">
+        TIME VISITANTE
+    </div>
+
+    <div class="score">
+        <span id="homeScore">0</span>
+        <span class="x">×</span>
+        <span id="awayScore">0</span>
+    </div>
+
+    <div class="timer" id="timer">
+        00:00
+    </div>
+
+    <div class="period" id="period">
+        1º TEMPO
+    </div>
+
+    <div class="added" id="added">
+    </div>
+
+    <!-- ESCALAÇÃO CASA -->
+    <div class="lineup home-lineup">
+
+        <div class="formation" id="homeFormation">
+            4-3-3
+        </div>
+
+        <div class="players" id="homePlayers">
+
+            <div class="player">
+                <span class="player-number">01</span>
+                <span class="player-name">JOGADOR 01</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">02</span>
+                <span class="player-name">JOGADOR 02</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">03</span>
+                <span class="player-name">JOGADOR 03</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">04</span>
+                <span class="player-name">JOGADOR 04</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">05</span>
+                <span class="player-name">JOGADOR 05</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">06</span>
+                <span class="player-name">JOGADOR 06</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">07</span>
+                <span class="player-name">JOGADOR 07</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">08</span>
+                <span class="player-name">JOGADOR 08</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">09</span>
+                <span class="player-name">JOGADOR 09</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">10</span>
+                <span class="player-name">JOGADOR 10</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">11</span>
+                <span class="player-name">JOGADOR 11</span>
+            </div>
+
+        </div>
+
+        <div class="coach">
+            <span class="coach-label">Técnico:</span>
+            <span id="homeCoach">NOME DO TÉCNICO</span>
+        </div>
+
+        <div class="bench">
+
+            <div class="bench-title">
+                RESERVAS
+            </div>
+
+            <div class="bench-players" id="homeBench">
+                <div class="bench-player">01 JOGADOR</div>
+                <div class="bench-player">02 JOGADOR</div>
+                <div class="bench-player">03 JOGADOR</div>
+                <div class="bench-player">04 JOGADOR</div>
+                <div class="bench-player">05 JOGADOR</div>
+                <div class="bench-player">06 JOGADOR</div>
+                <div class="bench-player">07 JOGADOR</div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ESCALAÇÃO VISITANTE -->
+    <div class="lineup away-lineup">
+
+        <div class="formation" id="awayFormation">
+            4-2-3-1
+        </div>
+
+        <div class="players" id="awayPlayers">
+
+            <div class="player">
+                <span class="player-number">01</span>
+                <span class="player-name">JOGADOR 01</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">02</span>
+                <span class="player-name">JOGADOR 02</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">03</span>
+                <span class="player-name">JOGADOR 03</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">04</span>
+                <span class="player-name">JOGADOR 04</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">05</span>
+                <span class="player-name">JOGADOR 05</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">06</span>
+                <span class="player-name">JOGADOR 06</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">07</span>
+                <span class="player-name">JOGADOR 07</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">08</span>
+                <span class="player-name">JOGADOR 08</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">09</span>
+                <span class="player-name">JOGADOR 09</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">10</span>
+                <span class="player-name">JOGADOR 10</span>
+            </div>
+
+            <div class="player">
+                <span class="player-number">11</span>
+                <span class="player-name">JOGADOR 11</span>
+            </div>
+
+        </div>
+
+        <div class="coach">
+            <span class="coach-label">Técnico:</span>
+            <span id="awayCoach">NOME DO TÉCNICO</span>
+        </div>
+
+        <div class="bench">
+
+            <div class="bench-title">
+                RESERVAS
+            </div>
+
+            <div class="bench-players" id="awayBench">
+                <div class="bench-player">01 JOGADOR</div>
+                <div class="bench-player">02 JOGADOR</div>
+                <div class="bench-player">03 JOGADOR</div>
+                <div class="bench-player">04 JOGADOR</div>
+                <div class="bench-player">05 JOGADOR</div>
+                <div class="bench-player">06 JOGADOR</div>
+                <div class="bench-player">07 JOGADOR</div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ÁREA TRANSPARENTE DA WEBCAM -->
+    <div class="center-area"></div>
+
+
+    <!-- RODAPÉ -->
+    <div class="footer">
+        <span>IAGO LUCAS FUTEBOL</span>
+        <span>FUTEBOL EM PRIMEIRO LUGAR</span>
+        <span>@cortes.doiagolucasfutebol</span>
+    </div>
+
+</div>
+
+</body>
+</html>
